@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 interface AgtronScaleProps {
   position: number; // 0-100
@@ -18,15 +19,23 @@ export const AgtronScale = ({ position, roastLevel }: AgtronScaleProps) => {
           <div className="h-12 rounded-lg bg-gradient-agtron shadow-soft" />
           
           {/* Marker */}
-          <div
-            className="absolute -top-8 transition-all duration-700 ease-bounce"
-            style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
+          <motion.div
+            className="absolute -top-8"
+            initial={{ left: "0%", opacity: 0 }}
+            animate={{ left: `${position}%`, opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            style={{ transform: 'translateX(-50%)' }}
           >
             <div className="flex flex-col items-center">
-              <ChevronDown className="w-8 h-8 text-primary animate-bounce" />
+              <motion.div
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <ChevronDown className="w-8 h-8 text-primary" />
+              </motion.div>
               <div className="w-1 h-4 bg-primary rounded-full" />
             </div>
-          </div>
+          </motion.div>
 
           {/* Scale labels */}
           <div className="flex justify-between mt-2 text-xs text-muted-foreground">

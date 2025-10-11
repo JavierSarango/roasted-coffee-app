@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { AgtronScale } from "./AgtronScale";
 import { Badge } from "@/components/ui/badge";
 import type { InferenceResult } from "@/utils/coffeeInference";
+import { motion } from "framer-motion";
 
 interface InferenceResultsProps {
   result: InferenceResult;
@@ -14,10 +15,34 @@ export const InferenceResults = ({
   originalImage,
   segmentedImage,
 }: InferenceResultsProps) => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
+    <motion.div 
+      className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Images Section */}
-      <div className="space-y-4">
+      <motion.div className="space-y-4" variants={itemVariants}>
         <Card className="p-4 space-y-3">
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-2">
@@ -47,10 +72,10 @@ export const InferenceResults = ({
             </div>
           </div>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Results Section */}
-      <div className="space-y-4">
+      <motion.div className="space-y-4" variants={itemVariants}>
         <AgtronScale
           position={result.agtronPosition}
           roastLevel={result.roastLevel}
@@ -88,7 +113,7 @@ export const InferenceResults = ({
             </p>
           </div>
         </Card>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

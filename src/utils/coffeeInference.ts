@@ -30,22 +30,48 @@ const roastLevelData: Record<RoastLevel, { position: number; description: string
   },
 };
 
-export const simulateInference = (): Promise<InferenceResult> => {
-  return new Promise((resolve) => {
-    // Simulate processing time
-    setTimeout(() => {
-      const levels: RoastLevel[] = ["Verde", "Claro", "Medio", "Oscuro", "Sobretostado"];
-      const randomLevel = levels[Math.floor(Math.random() * levels.length)];
-      const data = roastLevelData[randomLevel];
-      
-      resolve({
-        roastLevel: randomLevel,
-        confidence: Math.random() * 15 + 85, // 85-100% confidence
-        agtronPosition: data.position,
-        description: data.description,
-      });
-    }, 1500);
-  });
+export const simulateInference = async (imageFile: File): Promise<InferenceResult> => {
+  // API endpoint (simulado - reemplazar con el endpoint real)
+  const API_ENDPOINT = "https://api.ejemplo.com/infer";
+  
+  try {
+    // Crear FormData con la imagen
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    
+    // Simular llamada API (comentar cuando uses endpoint real)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Simular respuesta (descomentar para llamada real)
+    /*
+    const response = await fetch(API_ENDPOINT, {
+      method: "POST",
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      throw new Error("Error en la inferencia");
+    }
+    
+    const result = await response.json();
+    // Esperamos: { class: "Medio", segmented_image_url: "https://..." }
+    */
+    
+    // Respuesta simulada
+    const levels: RoastLevel[] = ["Verde", "Claro", "Medio", "Oscuro", "Sobretostado"];
+    const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+    const data = roastLevelData[randomLevel];
+    
+    return {
+      roastLevel: randomLevel,
+      confidence: Math.random() * 15 + 85, // 85-100% confidence
+      agtronPosition: data.position,
+      description: data.description,
+    };
+  } catch (error) {
+    console.error("Error en la inferencia:", error);
+    throw new Error("No se pudo obtener la inferencia. Intenta nuevamente.");
+  }
 };
 
 export const getRoastLevelColor = (level: RoastLevel): string => {

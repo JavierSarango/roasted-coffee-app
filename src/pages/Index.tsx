@@ -46,7 +46,7 @@ const Index = () => {
     setIsProcessing(true);
     
     try {
-      const inferenceResult = await simulateInference();
+      const inferenceResult = await simulateInference(selectedImage);
       setResult(inferenceResult);
       
       toast({
@@ -54,9 +54,10 @@ const Index = () => {
         description: `Nivel de tostado: ${inferenceResult.roastLevel}`,
       });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Hubo un problema al procesar la imagen.";
       toast({
         title: "Error",
-        description: "Hubo un problema al procesar la imagen.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
