@@ -143,7 +143,6 @@ const Index = () => {
               <InferenceResults
                 result={result}
                 originalImage={coffeeBeansOriginal}
-                segmentedImage={coffeeBeansSegmented}
               />
               
               <div className="flex justify-center pt-4">

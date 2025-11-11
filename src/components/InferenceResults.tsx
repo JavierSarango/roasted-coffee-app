@@ -7,13 +7,11 @@ import { motion } from "framer-motion";
 interface InferenceResultsProps {
   result: InferenceResult;
   originalImage?: string;
-  segmentedImage?: string;
 }
 
 export const InferenceResults = ({
   result,
   originalImage,
-  segmentedImage,
 }: InferenceResultsProps) => {
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -52,21 +50,6 @@ export const InferenceResults = ({
               <img
                 src={originalImage}
                 alt="Original coffee beans"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4 space-y-3">
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">
-              Imagen Segmentada
-            </h3>
-            <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-              <img
-                src={segmentedImage}
-                alt="Segmented coffee beans"
                 className="w-full h-full object-cover"
               />
             </div>
