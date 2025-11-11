@@ -39,15 +39,25 @@ export const AgtronScale = ({ position, roastLevel }: AgtronScaleProps) => {
             ))}
           </div>
           
-          {/* Marker */}
+          {/* Marker with label */}
           <motion.div
-            className="absolute -top-8"
+            className="absolute -top-20"
             initial={{ left: "0%", opacity: 0 }}
             animate={{ left: `${position}%`, opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             style={{ transform: 'translateX(-50%)' }}
           >
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center gap-1">
+              {/* Label rectangle */}
+              <motion.div
+                className="bg-primary text-primary-foreground px-3 py-1.5 rounded-md shadow-lg text-sm font-semibold whitespace-nowrap"
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                {roastLevel}
+              </motion.div>
+              
+              {/* Arrow */}
               <motion.div
                 animate={{ y: [0, -4, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
