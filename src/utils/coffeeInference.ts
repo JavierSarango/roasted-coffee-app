@@ -30,47 +30,63 @@ const roastLevelData: Record<RoastLevel, { position: number; description: string
   },
 };
 
+const apiToFrontendMap: Record<string, RoastLevel> = {
+  "Dark": "Oscuro",
+  "Green": "Verde",
+  "Light": "Claro",
+  "Medium": "Medio",
+  "Overbaking": "Sobretostado"
+};
+
 export const simulateInference = async (imageFile: File): Promise<InferenceResult> => {
-  // API endpoint (simulado - reemplazar con el endpoint real)
-  const API_ENDPOINT = "https://api.ejemplo.com/infer";
+  // 1. Apunta a tu API local de FastAPI (asegúrate que el puerto sea correcto)
+  const API_ENDPOINT = "http://127.0.0.1:8000/predict";
   
   try {
-    // Crear FormData con la imagen
+    // 2. Crear FormData con la clave "file"
     const formData = new FormData();
-    formData.append("image", imageFile);
+    formData.append("file", imageFile); 
     
-    // Simular llamada API (comentar cuando uses endpoint real)
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Simular respuesta (descomentar para llamada real)
-    /*
+    // 3. Realizar la llamada API real
     const response = await fetch(API_ENDPOINT, {
       method: "POST",
       body: formData,
     });
     
     if (!response.ok) {
-      throw new Error("Error en la inferencia");
+      const errorData = await response.json();
+      console.error("Error en la respuesta del API:", errorData);
+      throw new Error(`Error del servidor: ${response.statusText}`);
     }
     
-    const result = await response.json();
-    // Esperamos: { class: "Medio", segmented_image_url: "https://..." }
-    */
+    // 4. Obtener la respuesta JSON del API (en Inglés)
+    // (Ej: { "clase_predicha": "Dark", "confianza": 0.99 })
+    const result = await response.json(); 
     
-    // Respuesta simulada
-    const levels: RoastLevel[] = ["Verde", "Claro", "Medio", "Oscuro", "Sobretostado"];
-    const randomLevel = levels[Math.floor(Math.random() * levels.length)];
-    const data = roastLevelData[randomLevel];
-    
+    // 5. --- ¡TRADUCCIÓN! ---
+    // Traduce la respuesta del API (ej: "Dark") al tipo del Frontend (ej: "Oscuro")
+    const apiLevel = result.clase_predicha; // "Dark"
+    const frontendLevel = apiToFrontendMap[apiLevel]; // "Oscuro"
+
+    if (!frontendLevel) {
+      // Manejo de error si la API devuelve una clase inesperada
+      console.error("Clase no reconocida recibida del API:", apiLevel);
+      throw new Error("Respuesta del API no válida.");
+    }
+
+    // 6. Usa el nivel en ESPAÑOL ('frontendLevel') para buscar los datos
+    const data = roastLevelData[frontendLevel]; 
+
     return {
-      roastLevel: randomLevel,
-      confidence: Math.random() * 15 + 85, // 85-100% confidence
+      roastLevel: frontendLevel, // Devuelve el nivel en Español
+      confidence: result.confianza * 100, // Convierte 0.99 a 99%
       agtronPosition: data.position,
       description: data.description,
     };
+
   } catch (error) {
     console.error("Error en la inferencia:", error);
-    throw new Error("No se pudo obtener la inferencia. Intenta nuevamente.");
+    throw new Error("No se pudo obtener la inferencia. ¿Está el API de FastAPI funcionando?");
   }
 };
 
