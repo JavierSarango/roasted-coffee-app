@@ -84,16 +84,23 @@ export const InferenceResults = ({
           </div>
         </Card>
 
-        {/* Additional info card */}
+        {/* Uses card */}
         <Card className="p-6 bg-secondary/50 border-secondary">
-          <div className="space-y-2">
+          <div className="space-y-3">
             <h4 className="text-sm font-semibold text-foreground">
-              💡 Sobre la clasificación
+              💡 Ideal para:
             </h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              La escala Agtron mide el color del café tostado, donde valores más altos
-              indican tostados más claros y valores más bajos indican tostados más oscuros.
-            </p>
+            <ul className="space-y-2">
+              {result.uses.map((use, index) => (
+                <li 
+                  key={index} 
+                  className="text-sm text-muted-foreground leading-relaxed flex items-start"
+                >
+                  <span className="mr-2 text-primary">•</span>
+                  <span>{use}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </Card>
       </motion.div>

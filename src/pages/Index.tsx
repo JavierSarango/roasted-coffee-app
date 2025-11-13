@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { simulateInference, type InferenceResult } from "@/utils/coffeeInference";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sparkles } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import coffeeHeroImage from "@/assets/coffee-hero.jpg";
 import coffeeBeansOriginal from "@/assets/coffee-beans-original.jpg";
 import coffeeBeansSegmented from "@/assets/coffee-beans-segmented.jpg";
@@ -70,7 +71,7 @@ const Index = () => {
       <Header />
       
       {/* Hero Section */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-16 overflow-hidden">
         <img
           src={coffeeHeroImage}
           alt="Coffee beans hero"
@@ -81,6 +82,17 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 -mt-20 relative z-10">
+          {/* <Card className="fixed p-6 bg-secondary/50 border-secondary mb-5"> */}
+          <div className="space-y-2 mb-3 hover:scale-[1.02] transition-transform duration-300">
+            <h4 className="text-lg font-semibold text-foreground">
+              💡 Sobre la clasificación
+            </h4>
+            <p className="text-m text-muted-foreground leading-relaxed ">
+              La escala Agtron mide el color del café tostado, donde valores más altos
+              indican tostados más claros y valores más bajos indican tostados más oscuros.
+            </p>
+          </div>
+        {/* </Card> */}
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Upload Section */}
           {!selectedImage && (
@@ -142,7 +154,7 @@ const Index = () => {
             <>
               <InferenceResults
                 result={result}
-                originalImage={coffeeBeansOriginal}
+                originalImage={imagePreview}
               />
               
               <div className="flex justify-center pt-4">

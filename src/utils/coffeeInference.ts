@@ -5,28 +5,56 @@ export interface InferenceResult {
   confidence: number;
   agtronPosition: number; // 0-100 position on the scale
   description: string;
+  uses: string[]; 
 }
 
-const roastLevelData: Record<RoastLevel, { position: number; description: string }> = {
+const roastLevelData: Record<RoastLevel, { 
+  position: number; 
+  description: string;
+  uses: string[]; 
+}> = {
   Verde: {
     position: 5,
-    description: "Grano sin tostar, color verde natural. No apto para consumo directo.",
+    description: "Grano sin tostar, color verde natural.",
+    uses: [
+      "No recomendado para consumo",
+      "Usado para tostado posterior"
+    ]
   },
   Claro: {
     position: 25,
-    description: "Tostado suave con notas más ácidas. Preserva los sabores originales del grano.",
+    description: "Tostado suave con notas más ácidas. Presenta ciertas notas florales y preserva los sabores originales del grano.",
+    uses: [
+      "Métodos de filtrado (V60, Chemex)"
+    ]
   },
   Medio: {
     position: 50,
-    description: "Balance ideal entre acidez y cuerpo. Perfil de sabor equilibrado y versátil.",
+    description: "Balance entre acidez y cuerpo. Presenta carácteristicas más dulces a frutos secos o caramelo.",
+    uses: [
+      "Cafetera americana",
+      "Prensa francesa",
+      "Métodos de filtrado (Aeropress, V60)"
+    ]
   },
   Oscuro: {
     position: 75,
     description: "Tostado intenso con notas amargas y cuerpo robusto. Sabores caramelizados.",
+    uses: [
+      "Espresso",
+      "Moka italiana",
+      "Café con leche",
+      "Café americano fuerte",
+      "Café turco"
+    ]
   },
   Sobretostado: {
     position: 95,
     description: "Tostado excesivo con sabor ahumado y carbonizado. Pérdida de matices.",
+    uses: [
+      "No se considera como café de especialidad",
+      "Posible uso en mezclas muy específicas",
+    ]
   },
 };
 
@@ -82,6 +110,7 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
       confidence: result.confianza * 100, // Convierte 0.99 a 99%
       agtronPosition: data.position,
       description: data.description,
+      uses: data.uses, 
     };
 
   } catch (error) {
