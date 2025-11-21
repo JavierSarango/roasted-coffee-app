@@ -81,19 +81,8 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 -mt-20 relative z-10">
-          {/* <Card className="fixed p-6 bg-secondary/50 border-secondary mb-5"> */}
-          <div className="space-y-2 mb-3 hover:scale-[1.02] transition-transform duration-300">
-            <h4 className="text-lg font-semibold text-foreground">
-              💡 Sobre la clasificación
-            </h4>
-            <p className="text-m text-muted-foreground leading-relaxed ">
-              La escala Agtron mide el color del café tostado, donde valores más altos
-              indican tostados más claros y valores más bajos indican tostados más oscuros.
-            </p>
-          </div>
-        {/* </Card> */}
-        <div className="max-w-6xl mx-auto space-y-8">
+      <main className="container mx-auto px-4 py-16 md:py-24">          
+        <div className="max-w-6x2 mx-auto space-y-8">
           {/* Upload Section */}
           {!selectedImage && (
             <div className="animate-fade-in">
