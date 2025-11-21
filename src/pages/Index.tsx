@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import coffeeHeroImage from "@/assets/coffee-hero.jpg";
 import coffeeBeansOriginal from "@/assets/coffee-beans-original.jpg";
 import coffeeBeansSegmented from "@/assets/coffee-beans-segmented.jpg";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -67,7 +68,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
       {/* Hero Section */}
@@ -162,6 +163,7 @@ const Index = () => {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
