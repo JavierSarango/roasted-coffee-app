@@ -6,6 +6,7 @@ export interface InferenceResult {
   agtronPosition: number; // 0-100 position on the scale
   description: string;
   uses: string[]; 
+  segmentationImage: string;
 }
 
 const roastLevelData: Record<RoastLevel, { 
@@ -68,8 +69,8 @@ const apiToFrontendMap: Record<string, RoastLevel> = {
 
 export const simulateInference = async (imageFile: File): Promise<InferenceResult> => {
   // 1. Apunta a tu API local de FastAPI (asegúrate que el puerto sea correcto)
-  const API_ENDPOINT = "http://127.0.0.1:8000/predict";
-  
+  //const API_ENDPOINT = "http://127.0.0.1:8000/predict";
+  const API_ENDPOINT = "https://nonorthodox-colicky-awilda.ngrok-free.dev";
   try {
     // 2. Crear FormData con la clave "file"
     const formData = new FormData();
@@ -111,6 +112,7 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
       agtronPosition: data.position,
       description: data.description,
       uses: data.uses, 
+      segmentationImage: result.segmentacion_base64,
     };
 
   } catch (error) {

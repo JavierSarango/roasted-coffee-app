@@ -39,14 +39,16 @@ export const InferenceResults = ({
       initial="hidden"
       animate="visible"
     >
-      {/* Images Section */}
+      {/* Images Section (Columna Izquierda Modificada) */}
       <motion.div className="space-y-4" variants={itemVariants}>
-        <Card className="p-4 space-y-3">
+        <Card className="p-4 space-y-6"> {/* Aumenté el espacio vertical a space-y-6 */}
+          
+          {/* 1. Imagen Original */}
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-2">
               Imagen Original
             </h3>
-            <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+            <div className="aspect-square rounded-lg overflow-hidden bg-muted shadow-sm">
               <img
                 src={originalImage}
                 alt="Original coffee beans"
@@ -54,10 +56,31 @@ export const InferenceResults = ({
               />
             </div>
           </div>
+
+          {/* 2. Imagen Segmentada (NUEVO BLOQUE) */}
+          {result.segmentationImage && (
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                Análisis de Segmentación
+                <Badge variant="outline" className="text-xs font-normal">IA</Badge>
+              </h3>
+              <div className="aspect-square rounded-lg overflow-hidden bg-muted shadow-sm border-2 border-primary/20">
+                <img
+                  src={result.segmentationImage}
+                  alt="Segmented coffee analysis"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                *Las áreas verdes indican la detección automática del grano.
+              </p>
+            </div>
+          )}
+
         </Card>
       </motion.div>
 
-      {/* Results Section */}
+      {/* Results Section (Columna Derecha - Sin cambios mayores) */}
       <motion.div className="space-y-4" variants={itemVariants}>
         <AgtronScale
           position={result.agtronPosition}
