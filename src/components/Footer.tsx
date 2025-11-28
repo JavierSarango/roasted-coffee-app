@@ -56,7 +56,7 @@ export const Footer = () => {
               </a>
              
               <a
-                href="https://linkedin.com/in/javier-andrés-sarango-sarango-90a6982bb/"
+                href="https://www.linkedin.com/school/universidad-nacional-de-loja/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"

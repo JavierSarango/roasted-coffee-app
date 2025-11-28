@@ -10,7 +10,7 @@ All colors MUST be HSL.
   :root {
     /* Warm coffee-inspired color palette */
     --background: 35 25% 97%;
-    --foreground: 0 0% 0%;
+    --foreground: 25 35% 15%;
 
     --card: 35 20% 98%;
     --card-foreground: 25 35% 15%;

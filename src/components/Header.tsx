@@ -1,5 +1,6 @@
 import { Coffee } from "lucide-react";
-
+import logoUNL from "../assets/logoUNL.png";
+import logoCarrera from "../assets/LogoCarreraNombre.png";
 export const Header = () => {
   return (
     <header className="border-b border-border bg-card sticky top-0 z-10">
@@ -23,12 +24,12 @@ export const Header = () => {
           {/* Sección derecha - Logos */}
           <div className="hidden md:flex items-center gap-4">
             <img 
-              src="src\assets\logoUNL.png" 
+              src={logoUNL} 
               alt="Logo 1" 
               className="h-10 w-auto object-contain"
             />
             <img 
-              src="src/assets/LogoCarreraNombre.png" 
+              src={logoCarrera} 
               alt="Logo 2" 
               className="h-10 w-auto object-contain"
             />

@@ -70,7 +70,7 @@ const apiToFrontendMap: Record<string, RoastLevel> = {
 export const simulateInference = async (imageFile: File): Promise<InferenceResult> => {
   // 1. Apunta a tu API local de FastAPI (asegúrate que el puerto sea correcto)
   //const API_ENDPOINT = "http://127.0.0.1:8000/predict";
-  const API_ENDPOINT = "https://nonorthodox-colicky-awilda.ngrok-free.dev";
+  const API_ENDPOINT = "https://nonorthodox-colicky-awilda.ngrok-free.dev/predict";
   try {
     // 2. Crear FormData con la clave "file"
     const formData = new FormData();
@@ -80,6 +80,9 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
     const response = await fetch(API_ENDPOINT, {
       method: "POST",
       body: formData,
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
     });
     
     if (!response.ok) {
