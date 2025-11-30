@@ -1,4 +1,4 @@
-export type RoastLevel = "Verde" | "Claro" | "Medio" | "Oscuro" | "Sobretostado";
+export type RoastLevel = "Verde" | "Claro" | "Medio" | "Oscuro" | "Sobretostado" | "Desconocido" | "NoDetectado";
 
 export interface InferenceResult {
   roastLevel: RoastLevel;
@@ -7,6 +7,7 @@ export interface InferenceResult {
   description: string;
   uses: string[]; 
   segmentationImage: string;
+  errorMessage: string;
 }
 
 const roastLevelData: Record<RoastLevel, { 
@@ -57,6 +58,17 @@ const roastLevelData: Record<RoastLevel, {
       "Posible uso en mezclas muy específicas",
     ]
   },
+  Desconocido: {
+    position: 0, 
+    description: "El sistema no está seguro de la clasificación (Confianza baja).",
+    uses: ["Verifica la iluminación", "Intenta con una foto más clara"]
+  },
+  NoDetectado: {
+    position: 0,
+    description: "No se detectaron granos de café válidos en la imagen.",
+    uses: ["Asegúrate de enfocar los granos", "Evita objetos extraños"]
+  }
+
 };
 
 const apiToFrontendMap: Record<string, RoastLevel> = {
@@ -64,19 +76,21 @@ const apiToFrontendMap: Record<string, RoastLevel> = {
   "Green": "Verde",
   "Light": "Claro",
   "Medium": "Medio",
-  "Overbaking": "Sobretostado"
+  "Overbaking": "Sobretostado",
+  "Unknown": "Desconocido",
+  "No Coffee": "NoDetectado"
 };
 
 export const simulateInference = async (imageFile: File): Promise<InferenceResult> => {
-  // 1. Apunta a tu API local de FastAPI (asegúrate que el puerto sea correcto)
+  // API ENDPOINT
   //const API_ENDPOINT = "http://127.0.0.1:8000/predict";
   const API_ENDPOINT = "https://nonorthodox-colicky-awilda.ngrok-free.dev/predict";
   try {
-    // 2. Crear FormData con la clave "file"
+    // FormData
     const formData = new FormData();
     formData.append("file", imageFile); 
     
-    // 3. Realizar la llamada API real
+    // Realizar la llamada API real
     const response = await fetch(API_ENDPOINT, {
       method: "POST",
       body: formData,
@@ -91,14 +105,14 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
       throw new Error(`Error del servidor: ${response.statusText}`);
     }
     
-    // 4. Obtener la respuesta JSON del API (en Inglés)
+    // Obtener la respuesta JSON del API (en Inglés)
     // (Ej: { "clase_predicha": "Dark", "confianza": 0.99 })
     const result = await response.json(); 
     
-    // 5. --- ¡TRADUCCIÓN! ---
+    // --- ¡TRADUCCIÓN! ---
     // Traduce la respuesta del API (ej: "Dark") al tipo del Frontend (ej: "Oscuro")
     const apiLevel = result.clase_predicha; // "Dark"
-    const frontendLevel = apiToFrontendMap[apiLevel]; // "Oscuro"
+    const frontendLevel = apiToFrontendMap[apiLevel]  || "Desconocido"; // "Oscuro"
 
     if (!frontendLevel) {
       // Manejo de error si la API devuelve una clase inesperada
@@ -106,21 +120,25 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
       throw new Error("Respuesta del API no válida.");
     }
 
-    // 6. Usa el nivel en ESPAÑOL ('frontendLevel') para buscar los datos
+    // Usa el nivel en ESPAÑOL ('frontendLevel') para buscar los datos
     const data = roastLevelData[frontendLevel]; 
+    const descriptionToShow = result.mensaje_error ? 
+        `${data.description} (${result.mensaje_error})` : 
+        data.description;
 
     return {
-      roastLevel: frontendLevel, // Devuelve el nivel en Español
-      confidence: result.confianza * 100, // Convierte 0.99 a 99%
+      roastLevel: frontendLevel, 
+      confidence: result.confianza * 100, 
       agtronPosition: data.position,
-      description: data.description,
+      description: descriptionToShow,
       uses: data.uses, 
       segmentationImage: result.segmentacion_base64,
+      errorMessage: result.mensaje_error,
     };
 
   } catch (error) {
     console.error("Error en la inferencia:", error);
-    throw new Error("No se pudo obtener la inferencia. ¿Está el API de FastAPI funcionando?");
+    throw new Error("No se pudo obtener la inferencia. API fuera de servicio");
   }
 };
 
@@ -131,6 +149,8 @@ export const getRoastLevelColor = (level: RoastLevel): string => {
     Medio: "hsl(var(--coffee-medium))",
     Oscuro: "hsl(var(--coffee-dark))",
     Sobretostado: "hsl(var(--coffee-burnt))",
+    Desconocido: "hsl(0, 0%, 60%)",
+    NoDetectado: "hsl(0, 80%, 60%)",
   };
-  return colors[level];
+  return colors[level] || "hsl(0, 0%, 50%)";
 };

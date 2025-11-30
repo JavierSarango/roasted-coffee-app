@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import type { InferenceResult } from "@/utils/coffeeInference";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Image, Sparkles } from "lucide-react";
+import { Image, Sparkles, AlertTriangle, ShieldAlert } from "lucide-react";
+import {cn } from "@/lib/utils";
 
 interface InferenceResultsProps {
   result: InferenceResult;
@@ -17,7 +18,7 @@ export const InferenceResults = ({
   originalImage,
 }: InferenceResultsProps) => {
   const [showSegmented, setShowSegmented] = useState(false);
-
+  const isRejection = result.roastLevel === "Desconocido" || result.roastLevel === "NoDetectado";
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -105,7 +106,7 @@ export const InferenceResults = ({
                 <motion.img
                   key="original"
                   src={originalImage}
-                  alt="Original coffee beans"
+                  alt="Imagen Original"
                   className="w-full h-full object-cover"
                   variants={imageVariants}
                   initial="enter"
@@ -116,8 +117,11 @@ export const InferenceResults = ({
                 <motion.img
                   key="segmented"
                   src={result.segmentationImage}
-                  alt="Segmented coffee analysis"
-                  className="w-full h-full object-cover"
+                  alt="Imagen Segmentada"
+                  className={cn(
+                    "w-full h-full object-cover", 
+                    isRejection && "opacity-80 grayscale-[0.5]",
+                  )}
                   variants={imageVariants}
                   initial="enter"
                   animate="center"
@@ -125,17 +129,33 @@ export const InferenceResults = ({
                 />
               )}
             </AnimatePresence>
+            {isRejection && showSegmented && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+                <div className="bg-background/90 p-4 rounded-lg shadow-lg border border-red-200 text-center">
+                  <ShieldAlert className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-red-600">
+                    {result.roastLevel === "NoDetectado" ? "Objeto Inválido" : "Incierto"}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Descripción según la vista */}
           {showSegmented && result.segmentationImage && (
             <motion.p 
-              className="text-xs text-foreground/70"
+              className={cn(
+                "text-xs",
+                isRejection ? "text-red-500" : "text-foreground/70"
+              )}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              *Las áreas verdes indican la detección automática del grano.
+              {isRejection 
+                ? "*El modelo no pudo validar la geometría o el color del objeto."
+                : "*Las áreas verdes indican la detección automática del grano."
+              }
             </motion.p>
           )}
 
@@ -144,50 +164,79 @@ export const InferenceResults = ({
 
       {/* Results Section */}
       <motion.div className="space-y-4" variants={itemVariants}>
-        <AgtronScale
-          position={result.agtronPosition}
-          roastLevel={result.roastLevel}
-        />
+
+        {!isRejection ? (
+          <AgtronScale
+            position={result.agtronPosition}
+            roastLevel={result.roastLevel}
+          />
+        ) : (
+          <Card className="p-6 bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900">
+            <div className="flex items-start gap-4">
+              <ShieldAlert className="w-8 h-8 text-red-600 dark:text-red-400 mt-1" />
+              <div>
+                <h3 className="text-lg font-bold text-red-700 dark:text-red-300 mb-1">
+                  Informe de Análisis
+                </h3>
+                <p className="text-sm text-red-600/90 dark:text-red-300/90">
+                  El sistema no reconoció como válido la imagen proporcionada.
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
 
         <Card className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-foreground">
-              Confianza
+              Nivel de Confianza
             </h3>
-            <Badge variant="secondary" className="text-base font-semibold">
+            <Badge 
+              variant={isRejection ? "destructive" : "secondary"} 
+              className="text-base font-semibold"
+            >
               {result.confidence.toFixed(1)}%
             </Badge>
           </div>
 
           <div className="space-y-2">
             <h4 className="text-sm font-semibold text-foreground">
-              Descripción
+              Diagnóstico
             </h4>
-            <p className="text-sm text-foreground/90 leading-relaxed">
-              {result.description}
+            <p className={cn(
+              "text-sm leading-relaxed p-3 rounded-md",
+              isRejection ? "bg-muted font-medium text-red-600 dark:text-red-400" : "text-foreground/90"
+            )}>
+              {/* Mostrar mensaje de error técnico si existe, o la descripción normal */}
+              {result.errorMessage || result.description}
             </p>
           </div>
         </Card>
 
-        {/* Uses card */}
-        <Card className="p-6 bg-secondary/50 border-secondary">
-          <div className="space-y-3">
-            <h4 className="text-sm font-semibold text-foreground">
-              💡 Ideal para:
-            </h4>
-            <ul className="space-y-2">
-              {result.uses.map((use, index) => (
-                <li 
-                  key={index} 
-                  className="text-sm text-foreground/80 leading-relaxed flex items-start"
-                >
-                  <span className="mr-2 text-primary">•</span>
-                  <span>{use}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Card>
+        {/* Uses card (Solo mostrar si hay usos válidos y no es rechazo) */}
+        {result.uses && result.uses.length > 0 && (
+          <Card className="p-6 bg-secondary/50 border-secondary">
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-foreground">
+                {isRejection ? "💡 Recomendaciones:" : "💡 Ideal para:"}
+              </h4>
+              <ul className="space-y-2">
+                {result.uses.map((use, index) => (
+                  <li 
+                    key={index} 
+                    className="text-sm text-foreground/80 leading-relaxed flex items-start"
+                  >
+                    <span className={cn(
+                      "mr-2",
+                      isRejection ? "text-yellow-500" : "text-primary"
+                    )}>•</span>
+                    <span>{use}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Card>
+        )}
       </motion.div>
     </motion.div>
   );
