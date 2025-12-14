@@ -8,7 +8,7 @@ const About = () => {
     {
       icon: Brain,
       title: "Inteligencia Artificial",
-      description: "Utilizamos modelos de deep learning entrenados con imágenes de granos de café, para clasificar con precisión el nivel de tostado."
+      description: "Utilizamos modelos de aprendizaje automático entrenados con imágenes de granos de café, para clasificar con precisión el nivel de tostado."
     },
     {
       icon: Target,

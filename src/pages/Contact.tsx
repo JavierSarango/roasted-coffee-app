@@ -7,9 +7,9 @@ import { useState } from "react";
 
 const Contact = () => {
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const email = "sarango.2013.30@gmail.com";
+  const email = "comunicacion@unl.edu.ec";
   const [copiedPhone, setCopiedPhone] = useState(false);
-  const phone = "+593 994802684";
+  const phone = "07 2593550";
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(email);
@@ -119,7 +119,7 @@ const Contact = () => {
               Contáctanos
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              ¿Tienes preguntas, sugerencias o quieres colaborar? Nos encantaría escucharte.
+              ¿Tienes preguntas o sugerencias? Nos encantaría escucharte.
             </p>
           </div>
 
@@ -186,19 +186,7 @@ const Contact = () => {
           </Card> */}
 
           {/* CTA Card */}
-          <Card className="p-8 bg-primary/5 border-primary/20 text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-3">
-              ¿Listo para comenzar?
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Prueba el clasificador de café ahora y descubre el nivel de tostado de tus granos.
-            </p>
-            <a href="/">
-              <Button size="lg">
-                Ir al Clasificador
-              </Button>
-            </a>
-          </Card>
+         
         </div>
       </main>
 

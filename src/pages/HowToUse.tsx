@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Upload, Sparkles, BarChart3, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const HowToUse = () => {
   const steps = [
@@ -109,6 +110,19 @@ const HowToUse = () => {
                 <span>Evita fondos con colores que interfieran con el café</span>
               </li>
             </ul>
+          </Card>
+           <Card className="p-8 bg-primary/5 border-primary/20 text-center">
+            <h2 className="text-2xl font-bold text-foreground mb-3">
+              ¿Listo para comenzar?
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Prueba el clasificador de café ahora y descubre el nivel de tostado de tus granos.
+            </p>
+            <a href="/">
+              <Button size="lg">
+                Ir al Clasificador
+              </Button>
+            </a>
           </Card>
         </div>
       </main>

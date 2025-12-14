@@ -8,7 +8,7 @@ import NotFound from "./pages/NotFound";
 import HowToUse from '@/pages/HowToUse';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
-
+import ScrollToTop from "@/components/ui/ScrollTop";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -17,6 +17,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

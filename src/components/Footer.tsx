@@ -1,4 +1,4 @@
-import { Coffee, Github, Mail, Linkedin } from "lucide-react";
+import { Coffee, Github, Mail, Linkedin, Instagram, Facebook, Twitter } from "lucide-react";
 import { Link } from 'react-router-dom';
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -6,7 +6,7 @@ export const Footer = () => {
   return (
     <footer className="border-t border-border bg-card mt-auto">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Logo y descripción */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -23,7 +23,7 @@ export const Footer = () => {
           </div>
 
           {/* Enlaces rápidos */}
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             <h3 className="font-semibold text-foreground">Enlaces</h3>
             <ul className="space-y-2">
               <li>
@@ -39,22 +39,32 @@ export const Footer = () => {
                   <Link to="/contacto">Contacto</Link>
                 </li>
             </ul>
-          </div>
+          </div> */}
+
 
           {/* Redes sociales */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-foreground">Cuentas Institucionales</h3>
+            <h3 className="font-semibold text-foreground">Redes Oficiales</h3>
             <div className="flex gap-3">
-              {/* <a
-                href="https://github.com/JavierSarango/"
+              <a
+                href="https://www.facebook.com/UNLoficial"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
-                aria-label="GitHub"
+                aria-label="Facebook"
               >
-                <Github className="w-5 h-5 text-foreground" />
-              </a> */}
-             
+                <Facebook className="w-5 h-5 text-foreground" />
+              </a>
+              <a
+                href="https://www.instagram.com/unloficial/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-5 h-5 text-foreground" />
+              </a>
+
               <a
                 href="https://www.linkedin.com/school/universidad-nacional-de-loja/"
                 target="_blank"
@@ -63,6 +73,15 @@ export const Footer = () => {
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5 text-foreground" />
+              </a>
+              <a
+                href="https://x.com/UNLoficial"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+                aria-label="Twitter"
+              >
+                <Twitter className="w-5 h-5 text-foreground" />
               </a>
             </div>
           </div>
