@@ -17,47 +17,30 @@ const roastLevelData: Record<RoastLevel, {
 }> = {
   Verde: {
     position: 5,
-    description: "Grano sin tostar, color verde natural.",
-    uses: [
-      "No recomendado para consumo",
-      "Usado para tostado posterior"
-    ]
+    description: "Grano en su estado crudo, antes del proceso de tostado. Posee altos niveles de humedad y notas vegetales.",
+    uses: ["No apto para consumo", "Materia prima"]
   },
   Claro: {
     position: 25,
-    description: "Tostado suave con notas más ácidas. Presenta ciertas notas florales y preserva los sabores originales del grano.",
-    uses: [
-      "Métodos de filtrado (V60, Chemex)"
-    ]
+    description: "Tueste ligero que preserva las características originales del origen. Destaca la acidez y las notas florales o frutales.",
+    uses: ["Métodos de filtrado (V60, Chemex)"]
   },
   Medio: {
     position: 50,
-    description: "Balance entre acidez y cuerpo. Presenta carácteristicas más dulces a frutos secos o caramelo.",
-    uses: [
-      "Cafetera americana",
-      "Prensa francesa",
-      "Métodos de filtrado (Aeropress, V60)"
-    ]
+    description: "El balance ideal. Se reducen las notas vegetales y se caramelizan los azúcares, logrando dulzor y cuerpo.",
+    uses: ["Cafetera americana", "Prensa francesa", "Métodos de filtrado (Aeropress, V60)"]
   },
   Oscuro: {
     position: 75,
-    description: "Tostado intenso con notas amargas y cuerpo robusto. Sabores caramelizados.",
-    uses: [
-      "Espresso",
-      "Moka italiana",
-      "Café con leche",
-      "Café americano fuerte",
-      "Café turco"
-    ]
+    description: "Tueste prolongado donde los aceites salen a la superficie. Predomina el cuerpo y las notas amargas sobre la acidez.",
+    uses: ["Espresso", "Moka italiana", "Café con leche", "Café americano fuerte", "Café turco"]
   },
   Sobretostado: {
     position: 95,
-    description: "Tostado excesivo con sabor ahumado y carbonizado. Pérdida de matices.",
-    uses: [
-      "No se considera como café de especialidad",
-      "Posible uso en mezclas muy específicas",
-    ]
+    description: "Grano carbonizado. Se han perdido los aceites y azúcares, resultando en sabores a ceniza y humo.",
+    uses: ["Mezclas comerciales de baja calidad"]
   },
+  // --- Casos de Error ---
   Desconocido: {
     position: 0, 
     description: "El sistema no está seguro de la clasificación (Confianza baja).",
@@ -68,7 +51,6 @@ const roastLevelData: Record<RoastLevel, {
     description: "No se detectaron granos de café válidos en la imagen.",
     uses: ["Asegúrate de enfocar los granos", "Evita objetos extraños"]
   }
-
 };
 
 const apiToFrontendMap: Record<string, RoastLevel> = {
@@ -82,15 +64,14 @@ const apiToFrontendMap: Record<string, RoastLevel> = {
 };
 
 export const simulateInference = async (imageFile: File): Promise<InferenceResult> => {
-  // API ENDPOINT
-  //const API_ENDPOINT = "http://127.0.0.1:8000/predict";
+  
+ 
   const API_ENDPOINT = "https://nonorthodox-colicky-awilda.ngrok-free.dev/predict";
+  
   try {
-    // FormData
     const formData = new FormData();
     formData.append("file", imageFile); 
     
-    // Realizar la llamada API real
     const response = await fetch(API_ENDPOINT, {
       method: "POST",
       body: formData,
@@ -100,31 +81,25 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
     });
     
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({})); 
       console.error("Error en la respuesta del API:", errorData);
       throw new Error(`Error del servidor: ${response.statusText}`);
     }
     
-    // Obtener la respuesta JSON del API (en Inglés)
-    // (Ej: { "clase_predicha": "Dark", "confianza": 0.99 })
     const result = await response.json(); 
     
-    // --- ¡TRADUCCIÓN! ---
-    // Traduce la respuesta del API (ej: "Dark") al tipo del Frontend (ej: "Oscuro")
-    const apiLevel = result.clase_predicha; // "Dark"
-    const frontendLevel = apiToFrontendMap[apiLevel]  || "Desconocido"; // "Oscuro"
+    // --- TRADUCCIÓN ---
+    const apiLevel = result.clase_predicha; 
+    
+    // Mapeo seguro con fallback a "Desconocido"
+    const frontendLevel = apiToFrontendMap[apiLevel] || "Desconocido";
 
-    if (!frontendLevel) {
-      // Manejo de error si la API devuelve una clase inesperada
-      console.error("Clase no reconocida recibida del API:", apiLevel);
-      throw new Error("Respuesta del API no válida.");
-    }
-
-    // Usa el nivel en ESPAÑOL ('frontendLevel') para buscar los datos
     const data = roastLevelData[frontendLevel]; 
-    const descriptionToShow = result.mensaje_error ? 
-        `${data.description} (${result.mensaje_error})` : 
-        data.description;
+    
+    // Construcción del mensaje final para el usuario
+    const descriptionToShow = result.mensaje_error 
+        ? `${data.description} (${result.mensaje_error})` 
+        : data.description;
 
     return {
       roastLevel: frontendLevel, 
@@ -133,12 +108,14 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
       description: descriptionToShow,
       uses: data.uses, 
       segmentationImage: result.segmentacion_base64,
-      errorMessage: result.mensaje_error,
+      errorMessage: result.mensaje_error || "", // Aseguramos string vacío si no hay error
     };
 
   } catch (error) {
     console.error("Error en la inferencia:", error);
-    throw new Error("No se pudo obtener la inferencia. API fuera de servicio");
+    // Es buena práctica propagar el mensaje original si es posible
+    const msg = error instanceof Error ? error.message : "Error desconocido";
+    throw new Error(`No se pudo obtener la inferencia: ${msg}`);
   }
 };
 
@@ -149,8 +126,8 @@ export const getRoastLevelColor = (level: RoastLevel): string => {
     Medio: "hsl(var(--coffee-medium))",
     Oscuro: "hsl(var(--coffee-dark))",
     Sobretostado: "hsl(var(--coffee-burnt))",
-    Desconocido: "hsl(0, 0%, 60%)",
-    NoDetectado: "hsl(0, 80%, 60%)",
+    Desconocido: "hsl(0, 0%, 60%)",  // Gris
+    NoDetectado: "hsl(0, 80%, 60%)", // Rojo suave
   };
   return colors[level] || "hsl(0, 0%, 50%)";
 };

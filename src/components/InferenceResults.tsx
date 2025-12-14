@@ -1,12 +1,13 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Image, Sparkles, ShieldAlert, CheckCircle2 } from "lucide-react";
+
 import { Card } from "@/components/ui/card";
-import { AgtronScale } from "./AgtronScale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils"; // Asegúrate de tener esta utilidad (clsx + tailwind-merge)
+import { AgtronScale } from "./AgtronScale";
 import type { InferenceResult } from "@/utils/coffeeInference";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { Image, Sparkles, AlertTriangle, ShieldAlert } from "lucide-react";
-import {cn } from "@/lib/utils";
 
 interface InferenceResultsProps {
   result: InferenceResult;
@@ -18,95 +19,104 @@ export const InferenceResults = ({
   originalImage,
 }: InferenceResultsProps) => {
   const [showSegmented, setShowSegmented] = useState(false);
+
+  // Detectamos si es un caso de rechazo
   const isRejection = result.roastLevel === "Desconocido" || result.roastLevel === "NoDetectado";
+
+  // Variantes de animación para framer-motion
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
+      transition: { staggerChildren: 0.1 }
     }
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
-    }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
   const imageVariants = {
-    enter: {
-      opacity: 0,
-      scale: 0.95
-    },
-    center: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.3
-      }
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.95,
-      transition: {
-        duration: 0.2
-      }
-    }
+    enter: { opacity: 0, scale: 0.98 },
+    center: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, scale: 0.98, transition: { duration: 0.2 } }
   };
 
   return (
     <motion.div 
-      className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-5xl mx-auto"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Images Section */}
+      {/* ==========================================
+          COLUMNA IZQUIERDA: VISUALIZACIÓN
+      ========================================== */}
       <motion.div className="space-y-4" variants={itemVariants}>
-        <Card className="p-4 space-y-4">
+        <Card className={cn(
+          "p-4 space-y-4 overflow-hidden transition-colors duration-300",
+          isRejection ? "border-red-200 bg-red-50/10" : "border-border"
+        )}>
           
-          {/* Header con botones de toggle */}
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">
-              {showSegmented ? 'Análisis de Segmentación' : 'Imagen Original'}
+          {/* Cabecera de la Tarjeta de Imagen */}
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              {isRejection ? (
+                <span className="flex items-center gap-2 text-red-600">
+                  <ShieldAlert className="w-4 h-4" />
+                  Inspección Visual
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <Image className="w-4 h-4 text-muted-foreground" />
+                  Inspección Visual
+                </span>
+              )}
             </h3>
+            
+            {/* Botones de Toggle (Solo si hay imagen segmentada) */}
             {result.segmentationImage && (
-              <div className="flex gap-2">
+              <div className="flex bg-muted/50 p-1 rounded-lg">
                 <Button
-                  variant={!showSegmented ? "default" : "outline"}
+                  variant="ghost"
                   size="sm"
                   onClick={() => setShowSegmented(false)}
-                  className="gap-2"
+                  className={cn(
+                    "h-7 text-xs gap-1.5 rounded-md transition-all",
+                    !showSegmented && "bg-background shadow-sm text-foreground"
+                  )}
                 >
-                  <Image className="w-4 h-4" />
                   Original
                 </Button>
                 <Button
-                  variant={showSegmented ? "default" : "outline"}
+                  variant="ghost"
                   size="sm"
                   onClick={() => setShowSegmented(true)}
-                  className="gap-2"
+                  className={cn(
+                    "h-7 text-xs gap-1.5 rounded-md transition-all",
+                    showSegmented && "bg-background shadow-sm text-foreground",
+                    showSegmented && isRejection && "text-red-600"
+                  )}
                 >
-                  <Sparkles className="w-4 h-4" />
-                  Segmentada
+                  <Sparkles className="w-3 h-3" />
+                  Análisis
                 </Button>
               </div>
             )}
           </div>
 
-          {/* Contenedor de imagen con animación */}
-          <div className="relative aspect-square rounded-lg overflow-hidden bg-muted shadow-sm">
+          {/* Visor de Imagen */}
+          <div className={cn(
+            "relative aspect-square rounded-lg overflow-hidden bg-muted/30 shadow-inner border",
+            isRejection && showSegmented ? "border-red-200" : "border-border/50"
+          )}>
             <AnimatePresence mode="wait">
               {!showSegmented ? (
                 <motion.img
                   key="original"
-                  src={originalImage}
-                  alt="Imagen Original"
+                  src={originalImage || "/placeholder.jpg"}
+                  alt="Original"
                   className="w-full h-full object-cover"
                   variants={imageVariants}
                   initial="enter"
@@ -117,10 +127,11 @@ export const InferenceResults = ({
                 <motion.img
                   key="segmented"
                   src={result.segmentationImage}
-                  alt="Imagen Segmentada"
+                  alt="Análisis IA"
                   className={cn(
-                    "w-full h-full object-cover", 
-                    isRejection && "opacity-80 grayscale-[0.5]",
+                    "w-full h-full object-cover",
+                    // Si es rechazo, desaturamos un poco para enfatizar que es un estado de error
+                    isRejection && "grayscale-[0.2] contrast-[0.9]"
                   )}
                   variants={imageVariants}
                   initial="enter"
@@ -129,114 +140,138 @@ export const InferenceResults = ({
                 />
               )}
             </AnimatePresence>
-            {isRejection && showSegmented && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-                <div className="bg-background/90 p-4 rounded-lg shadow-lg border border-red-200 text-center">
-                  <ShieldAlert className="w-8 h-8 text-red-500 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-red-600">
-                    {result.roastLevel === "NoDetectado" ? "Objeto Inválido" : "Incierto"}
-                  </p>
-                </div>
-              </div>
-            )}
+
+            {/* Barra de estado inferior (Overlay discreto) */}
+            <div className={cn(
+              "absolute bottom-0 left-0 right-0 p-2 text-xs font-medium text-center backdrop-blur-md border-t",
+              isRejection 
+                ? "bg-red-900/80 text-white border-red-500/50" 
+                : "bg-background/80 text-foreground/80 border-border/50"
+            )}>
+              {showSegmented 
+                ? (isRejection ? "⚠️ Detección anómala o insuficiente" : "✨ Detección de granos activa")
+                : "Vista original sin procesar"
+              }
+            </div>
           </div>
 
-          {/* Descripción según la vista */}
-          {showSegmented && result.segmentationImage && (
+          {/* Pie de foto explicativo */}
+          {showSegmented && (
             <motion.p 
               className={cn(
-                "text-xs",
-                isRejection ? "text-red-500" : "text-foreground/70"
+                "text-xs px-1",
+                isRejection ? "text-red-600 font-medium" : "text-muted-foreground"
               )}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
             >
               {isRejection 
-                ? "*El modelo no pudo validar la geometría o el color del objeto."
-                : "*Las áreas verdes indican la detección automática del grano."
+                ? "El modelo no pudo identificar una forma de grano válida en las áreas resaltadas."
+                : "Las áreas verdes indican la superficie de los granos identificada por la IA."
               }
             </motion.p>
           )}
-
         </Card>
       </motion.div>
 
-      {/* Results Section */}
+      {/* ==========================================
+          COLUMNA DERECHA: DATOS E INFORME
+      ========================================== */}
       <motion.div className="space-y-4" variants={itemVariants}>
-
+        
+        {/* A. Escala Agtron o Tarjeta de Error */}
         {!isRejection ? (
           <AgtronScale
             position={result.agtronPosition}
             roastLevel={result.roastLevel}
           />
         ) : (
-          <Card className="p-6 bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900">
-            <div className="flex items-start gap-4">
-              <ShieldAlert className="w-8 h-8 text-red-600 dark:text-red-400 mt-1" />
-              <div>
-                <h3 className="text-lg font-bold text-red-700 dark:text-red-300 mb-1">
-                  Informe de Análisis
+          <Card className="p-6 bg-red-50/50 border-red-200 dark:bg-red-950/20 dark:border-red-900">
+            <div className="flex gap-4">
+              <div className="p-2 bg-red-100 dark:bg-red-900/50 rounded-full h-fit">
+                <ShieldAlert className="w-6 h-6 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-bold text-red-900 dark:text-red-200">
+                  Análisis No Concluyente
                 </h3>
-                <p className="text-sm text-red-600/90 dark:text-red-300/90">
-                  El sistema no reconoció como válido la imagen proporcionada.
+                <p className="text-sm text-red-700/90 dark:text-red-300/90 leading-relaxed">
+                  El sistema de seguridad ha rechazado esta imagen para evitar una clasificación errónea.
                 </p>
               </div>
             </div>
           </Card>
         )}
 
-        <Card className="p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">
-              Nivel de Confianza
-            </h3>
-            <Badge 
-              variant={isRejection ? "destructive" : "secondary"} 
-              className="text-base font-semibold"
-            >
-              {result.confidence.toFixed(1)}%
-            </Badge>
+        {/* B. Detalles de Clasificación */}
+        <Card className="p-6 space-y-5">
+          {/* Header Confianza */}
+          <div className="flex items-center justify-between border-b pb-4">
+            <div className="space-y-0.5">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Fiabilidad del modelo
+              </h3>
+              <p className="text-xs text-muted-foreground/60">
+                Basado en coherencia de color y forma
+              </p>
+            </div>
+            <div className="text-right">
+              <Badge 
+                variant={isRejection ? "destructive" : "outline"} 
+                className={cn(
+                  "text-lg px-3 py-1",
+                  !isRejection && "border-green-200 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
+                )}
+              >
+                {result.confidence.toFixed(1)}%
+              </Badge>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-foreground">
-              Diagnóstico
+          {/* Diagnóstico / Descripción */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold flex items-center gap-2">
+              {isRejection 
+                ? <span className="text-red-600">Diagnóstico de Error</span>
+                : <span className="text-foreground">Perfil de Tueste</span>
+              }
             </h4>
-            <p className={cn(
-              "text-sm leading-relaxed p-3 rounded-md",
-              isRejection ? "bg-muted font-medium text-red-600 dark:text-red-400" : "text-foreground/90"
+            
+            <div className={cn(
+              "p-4 rounded-lg text-sm leading-relaxed border",
+              isRejection 
+                ? "bg-red-50/30 border-red-100 text-red-800 dark:bg-red-900/10 dark:text-red-200" 
+                : "bg-muted/30 border-transparent text-foreground/90"
             )}>
-              {/* Mostrar mensaje de error técnico si existe, o la descripción normal */}
+              {/* Prioridad: Mensaje de Error API > Descripción Genérica */}
               {result.errorMessage || result.description}
-            </p>
+            </div>
           </div>
-        </Card>
 
-        {/* Uses card (Solo mostrar si hay usos válidos y no es rechazo) */}
-        {result.uses && result.uses.length > 0 && (
-          <Card className="p-6 bg-secondary/50 border-secondary">
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-foreground">
-                {isRejection ? "💡 Recomendaciones:" : "💡 Ideal para:"}
+          {/* C. Usos o Recomendaciones */}
+          {result.uses && result.uses.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                {isRejection ? "💡 Acciones sugeridas:" : "☕ Usos recomendados:"}
               </h4>
-              <ul className="space-y-2">
+              <ul className="grid gap-2">
                 {result.uses.map((use, index) => (
                   <li 
                     key={index} 
-                    className="text-sm text-foreground/80 leading-relaxed flex items-start"
+                    className="text-sm text-muted-foreground flex items-start gap-2.5 bg-secondary/20 p-2 rounded-md"
                   >
-                    <span className={cn(
-                      "mr-2",
-                      isRejection ? "text-yellow-500" : "text-primary"
-                    )}>•</span>
+                    {isRejection ? (
+                      <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
+                    ) : (
+                      <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                    )}
                     <span>{use}</span>
                   </li>
                 ))}
               </ul>
             </div>
-          </Card>
-        )}
+          )}
+        </Card>
       </motion.div>
     </motion.div>
   );

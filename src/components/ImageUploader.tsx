@@ -35,7 +35,7 @@ export const ImageUploader = ({ onImageSelect, disabled }: ImageUploaderProps) =
       transition={{ duration: 0.3 }}
     >
       <Card className="p-8 border-2 border-dashed border-border hover:border-primary transition-colors">
-        <div className="flex flex-col items-center justify-center space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-6">
           <div className="flex gap-4">
             <motion.div 
               className="p-4 rounded-full bg-secondary cursor-pointer"

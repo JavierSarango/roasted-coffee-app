@@ -8,9 +8,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import coffeeHeroImage from "@/assets/coffee-hero.jpg";
-import coffeeBeansOriginal from "@/assets/coffee-beans-original.jpg";
-import coffeeBeansSegmented from "@/assets/coffee-beans-segmented.jpg";
 import { Footer } from "@/components/Footer";
+// 1. Importa el nuevo componente
+import { AgtronWheel } from "@/components/AgtronWheel";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -82,72 +82,95 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-16 md:py-24">          
-        <div className="max-w-6x2 mx-auto space-y-8">
-          {/* Upload Section */}
-          {!selectedImage && (
-            <div className="animate-fade-in">
-              <ImageUploader
-                onImageSelect={handleImageSelect}
-                disabled={isProcessing}
-              />
-            </div>
-          )}
+      <main className="container mx-auto px-4 py-8 md:py-12 flex-grow">          
+        <div className="max-w-6xl mx-auto space-y-8">
+          
+          {/* 2. Sección de Carga dividida en 2 columnas 
+             Solo se muestra el Grid si NO hay un resultado todavía 
+          */}
+          {!result && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start animate-fade-in">
+              
+              {/* Columna Izquierda: Rueda Agtron */}
+              <div className="w-full h-full">
+                <Card className="p-6 h-full flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary/20 border-secondary/50">
+                  <h2 className="text-xl font-semibold mb-6 text-foreground/80">Rueda de Categorías de Tueste Agtron</h2>
+                  <div className="w-full max-w-[400px]">
+                    <AgtronWheel />
+                  </div>
+                </Card>
+              </div>
 
-          {/* Selected Image Preview & Inference Button */}
-          {selectedImage && !result && (
-            <div className="animate-fade-in space-y-4">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-full max-w-md">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full rounded-lg shadow-medium"
-                  />
-                </div>
+              {/* Columna Derecha: Uploader y Preview */}
+              <div className="space-y-6">
                 
-                <Button
-                  onClick={handleInference}
-                  disabled={isProcessing}
-                  size="lg"
-                  className="min-w-[200px]"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Analizando...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Ejecutar Inferencia
-                    </>
-                  )}
-                </Button>
+                {/* Upload Area */}
+                {!selectedImage && (
+                  <div className="h-full">
+                    <ImageUploader
+                      onImageSelect={handleImageSelect}
+                      disabled={isProcessing}
+                    />
+                  </div>
+                )}
 
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSelectedImage(null);
-                    setImagePreview("");
-                  }}
-                  disabled={isProcessing}
-                >
-                  Cambiar imagen
-                </Button>
+                {/* Selected Image Preview & Inference Button */}
+                {selectedImage && (
+                  <div className="animate-fade-in space-y-6">
+                     <Card className="p-6 border-primary/20">
+                        <h3 className="text-sm font-medium mb-3 text-muted-foreground">Imagen seleccionada:</h3>
+                        <div className="w-full aspect-video rounded-lg overflow-hidden bg-black/5 relative">
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                     </Card>
+                    
+                    <div className="flex flex-col gap-3">
+                      <Button
+                        onClick={handleInference}
+                        disabled={isProcessing}
+                        size="lg"
+                        className="w-full text-lg h-14 shadow-lg hover:shadow-xl transition-all"
+                      >
+                        {isProcessing ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Analizando granos...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="mr-2 h-6 w-6" />
+                            Ejecutar Análisis Colorimétrico
+                          </>
+                        )}
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setSelectedImage(null);
+                          setImagePreview("");
+                        }}
+                        disabled={isProcessing}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        Cancelar y cambiar imagen
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          {/* Results Section */}
+          {/* 3. Results Section (Se muestra a ancho completo cuando hay resultado) */}
           {result && (
-            <>
-              <InferenceResults
-                result={result}
-                originalImage={imagePreview}
-              />
-              
-              <div className="flex justify-center pt-4">
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold">Resultados del Análisis</h2>
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -156,10 +179,15 @@ const Index = () => {
                     setResult(null);
                   }}
                 >
-                  Analizar otra imagen
+                  Analizar otra muestra
                 </Button>
               </div>
-            </>
+              
+              <InferenceResults
+                result={result}
+                originalImage={imagePreview}
+              />
+            </div>
           )}
         </div>
       </main>

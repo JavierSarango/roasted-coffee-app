@@ -43,9 +43,9 @@ export const Footer = () => {
 
           {/* Redes sociales */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-foreground">Redes Sociales</h3>
+            <h3 className="font-semibold text-foreground">Cuentas Institucionales</h3>
             <div className="flex gap-3">
-              <a
+              {/* <a
                 href="https://github.com/JavierSarango/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -53,7 +53,7 @@ export const Footer = () => {
                 aria-label="GitHub"
               >
                 <Github className="w-5 h-5 text-foreground" />
-              </a>
+              </a> */}
              
               <a
                 href="https://www.linkedin.com/school/universidad-nacional-de-loja/"

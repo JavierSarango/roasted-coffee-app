@@ -9,7 +9,7 @@ export const Header = () => {
           {/* Sección izquierda - Título */}
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/10">
-              <Coffee className="w-6 h-6 text-primary" />
+              <Coffee className="w-6 h-6 text-primary" href="/"/>
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">
