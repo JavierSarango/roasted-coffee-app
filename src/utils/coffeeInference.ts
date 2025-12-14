@@ -65,8 +65,8 @@ const apiToFrontendMap: Record<string, RoastLevel> = {
 
 export const simulateInference = async (imageFile: File): Promise<InferenceResult> => {
   
- 
-  const API_ENDPOINT = "https://nonorthodox-colicky-awilda.ngrok-free.dev/predict";
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_ENDPOINT = `${API_BASE_URL}/predict`;
   
   try {
     const formData = new FormData();
@@ -75,9 +75,6 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
     const response = await fetch(API_ENDPOINT, {
       method: "POST",
       body: formData,
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
     });
     
     if (!response.ok) {
@@ -108,7 +105,7 @@ export const simulateInference = async (imageFile: File): Promise<InferenceResul
       description: descriptionToShow,
       uses: data.uses, 
       segmentationImage: result.segmentacion_base64,
-      errorMessage: result.mensaje_error || "", // Aseguramos string vacío si no hay error
+      errorMessage: result.mensaje_error || "", 
     };
 
   } catch (error) {
