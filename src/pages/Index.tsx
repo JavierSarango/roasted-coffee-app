@@ -94,7 +94,7 @@ const Index = () => {
               {/* Columna Izquierda: Rueda Agtron */}
               <div className="w-full h-full">
                 <Card className="p-6 h-full flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary/20 border-secondary/50">
-                  <h2 className="text-xl font-semibold mb-6 text-foreground/80">Rueda de Categorías de Tueste Agtron</h2>
+                  <h2 className="text-xl font-semibold mb-6 text-foreground/80">Categorías de Tueste Agtron</h2>
                   <div className="w-full max-w-[400px]">
                     <AgtronWheel />
                   </div>
