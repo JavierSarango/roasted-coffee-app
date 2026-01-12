@@ -193,7 +193,7 @@ export const InferenceResults = ({
               </div>
               <div className="space-y-1">
                 <h3 className="font-bold text-red-900 dark:text-red-200">
-                  Análisis No Concluyente
+                  No se logró un análisis claro
                 </h3>
                 <p className="text-sm text-red-700/90 dark:text-red-300/90 leading-relaxed">
                   El sistema de seguridad ha rechazado esta imagen para evitar una clasificación errónea.
