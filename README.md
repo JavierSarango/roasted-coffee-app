@@ -26,7 +26,7 @@ Este proyecto ha sido construido utilizando un stack moderno y eficiente:
 *   ✨ **Interfaz Moderna**: Diseño limpio y minimalista enfocado en la experiencia de usuario.
 *   ⚡ **Rendimiento Óptimo**: Carga rápida gracias a Vite y React.
 *   📱 **Responsive Design**: Totalmente adaptable a dispositivos móviles y de escritorio.
-*   ☕ **Análisis de Tostado**: (Descripción basada en el nombre) Herramienta para visualizar o clasificar los niveles de tostado del café.
+*   ☕ **Análisis de Tostado**: Herramienta para visualizar y clasificar los niveles de tostado del café.
 
 ## 🛠️ Instalación y Configuración Local
 
