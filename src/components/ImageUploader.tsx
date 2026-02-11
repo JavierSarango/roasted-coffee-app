@@ -57,7 +57,7 @@ export const ImageUploader = ({ onImageSelect, disabled }: ImageUploaderProps) =
         
           <div className="text-center space-y-2">
             <h3 className="text-lg font-semibold text-foreground">
-              Sube una imagen de café tostado
+              Sube una imagen
             </h3>
             <p className="text-sm text-muted-foreground">
               Arrastra una imagen o haz clic para seleccionar

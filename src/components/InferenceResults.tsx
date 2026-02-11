@@ -50,16 +50,14 @@ export const InferenceResults = ({
       initial="hidden"
       animate="visible"
     >
-      {/* ==========================================
-          COLUMNA IZQUIERDA: VISUALIZACIÓN
-      ========================================== */}
+      
       <motion.div className="space-y-4" variants={itemVariants}>
         <Card className={cn(
           "p-4 space-y-4 overflow-hidden transition-colors duration-300",
           isRejection ? "border-red-200 bg-red-50/10" : "border-border"
         )}>
           
-          {/* Cabecera de la Tarjeta de Imagen */}
+          
           <div className="flex items-center justify-between flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               {isRejection ? (
@@ -149,7 +147,7 @@ export const InferenceResults = ({
                 : "bg-background/80 text-foreground/80 border-border/50"
             )}>
               {showSegmented 
-                ? (isRejection ? "⚠️ Detección anómala o insuficiente" : "✨ Detección de granos activa")
+                ? (isRejection ? "Detección anómala o insuficiente" : "Detección de granos activa")
                 : "Vista original sin procesar"
               }
             </div>
@@ -174,12 +172,10 @@ export const InferenceResults = ({
         </Card>
       </motion.div>
 
-      {/* ==========================================
-          COLUMNA DERECHA: DATOS E INFORME
-      ========================================== */}
+    
       <motion.div className="space-y-4" variants={itemVariants}>
         
-        {/* A. Escala Agtron o Tarjeta de Error */}
+        
         {!isRejection ? (
           <AgtronScale
             position={result.agtronPosition}
@@ -196,7 +192,7 @@ export const InferenceResults = ({
                   No se logró un análisis claro
                 </h3>
                 <p className="text-sm text-red-700/90 dark:text-red-300/90 leading-relaxed">
-                  El sistema de seguridad ha rechazado esta imagen para evitar una clasificación errónea.
+                  Se ha rechazado esta imagen para evitar una clasificación errónea.
                 </p>
               </div>
             </div>

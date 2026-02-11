@@ -24,7 +24,6 @@ export const AgtronScale = ({ position, roastLevel }: AgtronScaleProps) => {
           Escala Agtron
         </h3>
         <div className="relative">
-          {/* Discrete segments */}
           <div className="flex gap-1 h-12 rounded-lg overflow-hidden shadow-soft">
             {roastSegments.map((segment) => (
               <motion.div
@@ -39,7 +38,7 @@ export const AgtronScale = ({ position, roastLevel }: AgtronScaleProps) => {
             ))}
           </div>
           
-          {/* Marker with label */}
+          
           <motion.div
             className="absolute -top-20"
             initial={{ left: "0%", opacity: 0 }}
@@ -48,7 +47,7 @@ export const AgtronScale = ({ position, roastLevel }: AgtronScaleProps) => {
             style={{ transform: 'translateX(-50%)' }}
           >
             <div className="flex flex-col items-center gap-1">
-              {/* Label rectangle */}
+              
               <motion.div
                 className="bg-primary text-primary-foreground px-3 py-1.5 rounded-md shadow-lg text-sm font-semibold whitespace-nowrap"
                 animate={{ y: [0, -4, 0] }}
@@ -57,7 +56,7 @@ export const AgtronScale = ({ position, roastLevel }: AgtronScaleProps) => {
                 {roastLevel}
               </motion.div>
               
-              {/* Arrow */}
+              
               <motion.div
                 animate={{ y: [0, -4, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
@@ -84,7 +83,7 @@ export const AgtronScale = ({ position, roastLevel }: AgtronScaleProps) => {
         </div>
       </div>
 
-      {/* Roast level display */}
+      
       <div className="pt-4 border-t border-border">
         <p className="text-xs text-muted-foreground mb-1">Nivel de tostado</p>
         <p className="text-3xl font-bold text-primary">{roastLevel}</p>
