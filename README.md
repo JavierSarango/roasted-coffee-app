@@ -20,6 +20,7 @@ Este proyecto ha sido construido utilizando un stack moderno y eficiente:
 *   **[TypeScript](https://www.typescriptlang.org/)**: Tipado estático para un código más robusto.
 *   **[Tailwind CSS](https://tailwindcss.com/)**: Framework de utilidades para el diseño.
 *   **[shadcn/ui](https://ui.shadcn.com/)**: Componentes de UI reutilizables y accesibles.
+*   **[Lovable](https://lovable.dev/)**: Estructura base del proyecto.
 
 ## 📋 Características Principales
 
